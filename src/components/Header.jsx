@@ -9,7 +9,6 @@ import TitleLogo from "../images/logo.png";
 import { useNavigate } from "react-router-dom";
 import CallIcon from '@mui/icons-material/Call';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import {
   Dialog,
   DialogTitle,
@@ -20,6 +19,7 @@ import {
   MenuItem
 } from "@mui/material";
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import axios from "axios";
 
 
 const BASE_URL = "http://localhost:8000/api/v1";
@@ -35,6 +35,31 @@ export default function Header() {
   const openLogout = Boolean(logOutAnchorEl);
 
   const navigate = useNavigate();
+
+  const [daycare, setDaycare] = useState();
+
+  useEffect(()=> {
+    if(token && role==="DAYCARE_OWNER"){
+      loadDaycare();
+    }
+  },[])
+
+  const loadDaycare = async () => {
+    try{
+      const daycareResponse = await axios({
+        method: "GET",
+        url: BASE_URL + "/daycare/my-daycare/"+localStorage.getItem("id"),
+        headers: { "Content-Type": "application/json" },
+        Authorization: "Bearer " + token,
+      });
+  
+      if(daycareResponse.data){
+        setDaycare(daycareResponse.data);
+      }
+    }catch(err){
+      console.error(err)
+    }
+  }
 
 
   return (
@@ -59,10 +84,6 @@ export default function Header() {
               src={TitleLogo}
             />
           </IconButton>
-          <Button onClick={()=> navigate("/")} sx={{ml: 1, color: "#fff", fontSize: 15, textTransform: 'none'}}>Home</Button>
-          <Button onClick={()=> navigate("/reviews")} sx={{ml: 0.5, color: "#fff", fontSize: 15, textTransform: 'none'}}>Reviews</Button>
-          <Button onClick={()=> navigate("/activities")} sx={{ml: 0.5, color: "#fff", fontSize: 15, textTransform: 'none'}}><a style={{textDecoration: "none", color: "#fff"}}>Activities</a></Button>
-          <Button onClick={()=> navigate("/admission")} sx={{ml: 0.5, color: "#fff", fontSize: 15, textTransform: 'none'}}><a style={{textDecoration: "none", color: "#fff"}}>Admission</a></Button>
           <Box sx={{flexGrow: 1}}></Box>
           <Box sx={{flexGrow: 1}}></Box>
           {role && role.toUpperCase() === "ADMIN" && (
@@ -80,6 +101,16 @@ export default function Header() {
             <IconButton
               title="Kids Dashboard"
               onClick={() => navigate("/kids-dashboard")}
+              color="inherit"
+              sx={{ marginLeft: 0 }}
+            >
+             <DashboardIcon sx={{color: "green"}}/>
+            </IconButton>
+          )}
+          {role && role.toUpperCase() === "DAYCARE_OWNER" && (
+            <IconButton
+              title="Daycare Dashboard"
+              onClick={() => navigate(`/daycare-dashboard/${daycare?.id}`)}
               color="inherit"
               sx={{ marginLeft: 0 }}
             >

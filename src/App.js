@@ -19,6 +19,8 @@ import Reviews from "./pages/Reviews";
 import Activities from "./pages/Activities";
 import Admission from "./pages/Admission";
 import KidsDashboard from "./pages/KidsDashboard";
+import DayCareDashboard from "./pages/DayCareDashboard";
+import DaycareRegistration from "./pages/DaycareRegistration";
 
 
 const App = ()=> {
@@ -32,10 +34,12 @@ const App = ()=> {
         <Route path="/reset-password" element={<ForgetPassword/>}/>
         <Route path="/admin-panel" element={<AdminPanel/>}/>
         <Route path="/profile" element={<ProfilePage/>}/>
-        <Route path="/reviews" element={<Reviews/>}/>
-        <Route path="/activities" element={<Activities/>}/>
-        <Route path="/admission" element={<Admission/>}/>
+        <Route path="/reviews/:id" element={<Reviews/>}/>
+        <Route path="/activities/:id" element={<Activities/>}/>
+        <Route path="/admission/:id" element={<Admission/>}/>
         <Route path="/kids-dashboard" element={<KidsDashboard/>}/>
+        <Route path="/daycare-dashboard/:id" element={<DayCareDashboard/>}/>
+        <Route path="/daycare-registration" element={<DaycareRegistration/>}/>
       </Routes>
     </Router>
     <Footer/>

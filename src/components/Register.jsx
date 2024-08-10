@@ -235,8 +235,9 @@ export default function Register({ handleHaveAccount }) {
                     onChange={(e) => { setRole(e.target.value)
                     }}
                   >
-                    <MenuItem value={"ADMIN"}>Admin</MenuItem>
                     <MenuItem value={"USER"}>User</MenuItem>
+                    <MenuItem value={"DAYCARE_OWNER"}>Daycare Owner</MenuItem>
+                    <MenuItem value={"ADMIN"}>Admin</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>

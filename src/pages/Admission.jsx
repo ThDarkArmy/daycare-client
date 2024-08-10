@@ -2,7 +2,7 @@ import { Box, Button, Container, Divider, FormControl, InputLabel, Menu, MenuIte
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 
 
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 const Admission = () => {
     const classes = useStyles();
     const navigate = useNavigate();
-
+    const param = useParams();
     const role = localStorage.getItem("role");
     const token = localStorage.getItem("token");
 
@@ -96,7 +96,7 @@ const Admission = () => {
             try {
                 const response = await axios({
                     method: "post",
-                    url: BASE_URL + "/kids",
+                    url: BASE_URL + `/kids/${param.id}`,
                     data: JSON.stringify(kidData),
                     headers: {
                       "content-type": "application/json",
@@ -105,7 +105,6 @@ const Admission = () => {
                   });
             
                   if (response.data) {
-                    console.log(response.data.id);
                     setKidId(response.data.id)
                     toast.success("Kid admitted successfully, please proceed with the payment.")
                     

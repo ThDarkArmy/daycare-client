@@ -4,46 +4,9 @@ import ActivityCard from '../components/ActivityCard';
 import ActivityForm from '../components/ActivityForm';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const BASE_URL = "http://localhost:8000/api/v1";
-
-const dummyActivities = [
-    {
-        id: 1,
-        title: 'Story Time',
-        time: '09:00',
-        description: 'Reading stories to children',
-    },
-    {
-        id: 2,
-        title: 'Outdoor Play',
-        time: '10:30',
-        description: 'Playing outside in the playground',
-    },
-    {
-        id: 3,
-        title: 'Arts and Crafts',
-        time: '13:00',
-        description: 'Creative activities with various materials',
-    },
-    {
-        id: 4,
-        title: 'Arts and Crafts',
-        time: '13:00',
-        description: 'Creative activities with various materials',
-    },
-    {
-        id: 5,
-        title: 'Arts and Crafts',
-        time: '13:00',
-        description: 'Creative activities with various materials',
-    },
-    {
-        id: 6,
-        title: 'Arts and Crafts',
-        time: '13:00',
-        description: 'Creative activities with various materials',
-    }]
 
 const Activities = () => {
     const role = localStorage.getItem("role");
@@ -51,6 +14,8 @@ const Activities = () => {
     const [activities, setActivities] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingActivity, setEditingActivity] = useState(null);
+
+    const param = useParams();
 
     const handleEditActivity = (id) => {
         setEditingActivity(activities.find(activity => activity.id === id));
@@ -68,8 +33,7 @@ const Activities = () => {
               },
             })
             if(response.data){
-                // setActivities(activities=> ([...activities, response.data]));
-                loadActivities();
+                loadDaycare();
                 toast.success("Activity deleted successfully!")
             }
           } catch (err) {
@@ -82,32 +46,34 @@ const Activities = () => {
         setIsDialogOpen(true);
     };
 
-    const loadActivities = async () => {
-        try {
-            const response = await axios({
-              url: BASE_URL + "/activities",
-              method: "GET",
-              headers: {
-                "content-type": "application/json",
-                Authorization: "Bearer " + token,
-              },
-            })
-            if(response.data){
-                setActivities(response.data)
-            }
+    useEffect(()=> {
+      loadDaycare();
+    },[])
+  
+    const loadDaycare = async () => {
+          try {
+              const response = await axios({
+                  method: "GET",
+                  url: BASE_URL + `/daycare/by-id/${param.id}`,
+                  headers: {
+                    "content-type": "application/json",
+                    Authorization: "Bearer " + token,
+                  },
+                });
+          
+                if (response.data) {
+                  setActivities(response.data.activities);
+                }
           } catch (err) {
-            toast.error(err.message)
+              toast.error("Some error occurred while loading activities!")
+              console.error(err)
           }
-    };
-
-    useEffect(() => {
-        loadActivities();
-    }, []);
+      }
 
     const handleSaveActivity = async (activity) => {
         try {
             const response = await axios({
-              url: BASE_URL + "/activities",
+              url: BASE_URL + `/activities/${param.id}`,
               method: "POST",
               data: JSON.stringify(activity),
               headers: {
@@ -116,8 +82,7 @@ const Activities = () => {
               },
             })
             if(response.data){
-                // setActivities(activities=> ([...activities, response.data]));
-                loadActivities();
+                loadDaycare();
                 toast.success("Activity added successfully!")
             }
           } catch (err) {
@@ -133,7 +98,7 @@ const Activities = () => {
                 <Typography variant="h5" component="div" sx={{ marginTop: 0 }}>
                     Daycare Activities
                 </Typography>
-                {role==="ADMIN" && <Button variant="contained" sx={{ marginTop: 0 }} onClick={handleAddActivity}>
+                {role==="DAYCARE_OWNER" && <Button variant="contained" sx={{ marginTop: 0 }} onClick={handleAddActivity}>
                     Add Activity
                 </Button>}
             </Box>

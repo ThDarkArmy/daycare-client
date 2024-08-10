@@ -1,182 +1,187 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from "react";
+import Header from "../components/Header";
+import axios from "axios";
 import {
-  Card, CardContent, Typography, Grid, Avatar, Container, Button, IconButton, Accordion, AccordionSummary, AccordionDetails
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { blue, grey } from '@mui/material/colors';
+  Box,
+  Typography,
+} from "@mui/material";
+
+import { styled } from "@mui/material/styles";
+import MuiAlert from "@mui/material/Alert";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { toast } from "react-toastify";
+
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
-import axios from 'axios';
 
 const BASE_URL = "http://localhost:8000/api/v1";
 
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
 
-const KidsDashboard = () => {
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "&:last-child td, &:last-child th": {
+    border: 1,
+  },
+}));
+
+const AdminPanel = () => {
   const navigate = useNavigate();
-
   const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
-  const [kidsData, setKidsData] = useState([]);
 
-  const handleDelete = async (id) => {
-    try {
-      const response = await axios({
-        url: BASE_URL + "/kids/"+id,
-        method: "DELETE",
-        headers: {
-          "content-type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      })
-      if(response.data){
-        const updatedKidsData = kidsData.filter(kid => kid.id !== id);
-        setKidsData(updatedKidsData);
-        toast.success("Kid deleted successfully")
-      }
-    } catch (err) {
-      toast.error(err.message)
-    }
-   
-  };
-
-  const loadAllKids = async () => {
-    try {
-      const response = await axios({
-        url: BASE_URL + "/kids",
-        method: "GET",
-        headers: {
-          "content-type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      })
-      if(response.data){
-        setKidsData(response.data)
-      }
-    } catch (err) {
-      toast.error(err.message)
-    }
-  }
+  const [daycares, setDaycares] = useState([]);
 
   useEffect(()=> {
     if(!token){
-      navigate("/")
+      navigate("/login-register");
+  }
+    if(role==="SECRETARY"){
+      navigate("/secretary-panel");
+    }else if(role==="USER"){
+      navigate("/");
     }
-    if(role==="USER"){
-      navigate("/kids-dashboard")
+},[])
+
+
+  const loadDaycares = async () => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: BASE_URL + "/daycare",
+        headers: {
+          "content-type": "application/json",
+          Authorization: "Bearer " + token,
+        }
+      });
+      if (response.data) {
+        setDaycares(response.data)
+      }
+    } catch (err) {
+      console.log(err);
     }
-    loadAllKids();
-  },[])
-
-  return (
-    <Container maxWidth="lg" sx={{ mt: 12 }}>
-      <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: 'bold', color: blue[600] }}>
-        All Kids
-      </Typography>
-      <Grid container spacing={4} sx={{ mt: 1 }}>
-        {kidsData?.map(kid => (
-          <Grid item key={kid.id} xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                backgroundColor: grey[50],
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                borderRadius: 2,
-                '&:hover': {
-                  boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
-                },
-              }}
-            >
-              <CardContent>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={3}>
-                    <Avatar
-                      alt={kid.name}
-                      src={kid.name[0]} // Placeholder image URL
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        bgcolor: blue[100],
-                        border: '2px solid white',
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={9}>
-                    <Typography variant="h6" sx={{ fontWeight: 'medium', color: blue[800] }}>
-                      {kid.name}
-                    </Typography>
-                    <Typography color="textSecondary">Age: {kid.age}</Typography>
-                    <Typography color="textSecondary">Sex: {kid.sex}</Typography>
-                    <Typography color="textSecondary">Address: {kid.address}</Typography>
-                    <Typography color="textSecondary">Contact: {kid.contact}</Typography>
-                  </Grid>
-                </Grid>
-              </CardContent>
-
-              <Accordion sx={{ boxShadow: 'none', mt: 1 }}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                  sx={{ backgroundColor: blue[50] }}
-                >
-                  <Typography>Payment Details</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {kid.feePayments.length > 0 ? (
-                    kid.feePayments.map(payment => (
-                      <Grid container key={payment.id} spacing={1} sx={{ mb: 1 }}>
-                        <Grid item xs={12}>
-                          <Typography color="textSecondary">
-                            Month/Year: {payment.month}/{payment.year}
-                          </Typography>
-                          <Typography color="textSecondary">
-                            Admission Fee: ${payment.admissionFee}
-                          </Typography>
-                          <Typography color="textSecondary">
-                            Tuition Fee: ${payment.tuitionFee}
-                          </Typography>
-                          <Typography color="textSecondary">
-                            Cultural Activity Fee: ${payment.culturalActivityFee}
-                          </Typography>
-                          <Typography color="textSecondary">
-                            Other Fee: ${payment.otherFee}
-                          </Typography>
-                          <Typography color="textSecondary">
-                            Payment Date: {new Date(payment.paymentDate).toLocaleDateString()}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    ))
-                  ) : (
-                    <Typography color="textSecondary">No payment details available</Typography>
-                  )}
-                </AccordionDetails>
-              </Accordion>
-
-              <Grid container spacing={1} justifyContent="flex-end" sx={{ px: 2, pb: 2, mt: 1 }}>
-                
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => handleDelete(kid.id)}
-                    sx={{ textTransform: 'none', borderRadius: 2 }}
-                  >
-                    Delete
-                  </Button>
-                </Grid>
-              </Grid>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
-  );
 };
 
-export default KidsDashboard;
+const deleteDaycare = async (id) => {
+  try {
+    const response = await axios({
+      method: "DELETE",
+      url: BASE_URL + "/daycare/"+id,
+      headers: {
+        "content-type": "application/json",
+        Authorization: "Bearer " + token,
+      }
+    });
+    if (response.data) {
+      toast.success("Daycare deleted successfully")
+    }
+  } catch (err) {
+    console.log(err);
+    toast.error("Error occured while deleteing daycares")
+  }
+};
+
+  useEffect(() => {
+   loadDaycares();
+  }, []);
+
+
+  return (
+    <div>
+      <Header />
+      <Box sx={{mt: 9, padding: 1}}>
+
+        <Box sx={{ mt: 5, mb: 1 }}>
+      
+          <Box display="flex" sx={{mt: 5}}>
+            <Typography variant="h5" color="initial">
+              Daycares
+            </Typography>
+          </Box>
+          <Box sx={{ mt: 2, overflowX:"auto" }}>
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>Daycare (Id)</StyledTableCell>
+                    <StyledTableCell align="right">Name</StyledTableCell>
+                    <StyledTableCell align="right">Contact No.</StyledTableCell>
+                    <StyledTableCell align="right">City</StyledTableCell>
+                    <StyledTableCell align="right">Address</StyledTableCell>
+                    <StyledTableCell align="right">Lower Age Limit</StyledTableCell>
+                    <StyledTableCell align="right">Higher Age Limit</StyledTableCell>
+                    <StyledTableCell align="right">Actions</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {daycares &&
+                    daycares.map((row) => (
+                      <StyledTableRow key={row.id}>
+                        <StyledTableCell component="th" scope="row">
+                          {row.id}
+                        </StyledTableCell>
+                        <StyledTableCell
+                          align="right"
+                          component="th"
+                          scope="row"
+                        >
+                          {row.name}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                          {row.contactNumber}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                          {row.city}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                          {row.fullAddress}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                          {row.lowerAgeLimit}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                          {row.higherAgeLimit}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                          <DeleteIcon
+                            titleAccess="Delete"
+                            sx={{ cursor: "pointer", ml: 2 }}
+                            onClick={() => deleteDaycare(row.id)}
+                          />
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Box sx={{display: "flex", mt: 1, mr: 2}}>
+          <Box sx={{flexGrow: 1}}></Box>
+          <Box sx={{ml: "auto"}}>
+          <Typography variant="h6" sx={{ color: 'secondary.main' }}>Total Revenue Generated: ${daycares?.length*500}</Typography>
+          </Box>
+          </Box>
+         
+        </Box>
+      </Box>
+    </div>
+  )
+}
+
+export default AdminPanel;

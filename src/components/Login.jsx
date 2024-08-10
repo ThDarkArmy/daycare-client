@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -11,7 +10,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import Alert from "@mui/material/Alert";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -48,11 +46,27 @@ export default function Login({ handleHaveAccount }) {
 
       if (response.data) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("id", response.data.user.id);
         localStorage.setItem("loggedInUser", response.data.user.name);
         localStorage.setItem("email", response.data.user.email);
         localStorage.setItem("isLoggedIn", true);
         localStorage.setItem("role", response.data.user.role.toUpperCase());
-                navigate("/");
+        if(response.data.user.role.toUpperCase()==="DAYCARE_OWNER"){
+          const daycareResponse = await axios({
+            method: "GET",
+            url: BASE_URL + "/daycare/my-daycare/"+response.data.user.id,
+            headers: { "Content-Type": "application/json" },
+            Authorization: "Bearer " + response.data.token,
+          });
+          if(daycareResponse.data?.id){
+            navigate(`/daycare-dashboard/${daycareResponse.data.id}`)
+          }else{
+            navigate("/daycare-registration")
+          }
+        }else{
+          navigate("/");
+        }
+                
       }
     } catch (err) {
       setError(true);

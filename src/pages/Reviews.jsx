@@ -13,10 +13,12 @@ import {
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const BASE_URL = "http://localhost:8000/api/v1";
 
 function ReviewPage() {
+    const param = useParams();
     const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
     const [reviews, setReviews] = useState([]);
@@ -26,32 +28,11 @@ function ReviewPage() {
         comment: '',
     });
 
-    const loadReviews = async () => {
-        try {
-            const response = await axios({
-              url: BASE_URL + "/reviews",
-              method: "GET",
-              headers: {
-                "content-type": "application/json",
-                Authorization: "Bearer " + token,
-              },
-            })
-            if(response.data){
-                setReviews(response.data)
-            }
-          } catch (err) {
-            toast.error(err.message)
-          }
-    };
-
-    useEffect(() => {
-        loadReviews();
-    }, []);
 
     const handleSubmitReview = async () => {
         try {
             const response = await axios({
-              url: BASE_URL + "/reviews",
+              url: BASE_URL + `/reviews/${param.id}`,
               method: "POST",
               data: JSON.stringify(newReview),
               headers: {
@@ -67,6 +48,30 @@ function ReviewPage() {
             toast.error(err.message)
           }
     };
+
+    useEffect(()=> {
+        loadDaycare();
+      },[])
+    
+      const loadDaycare = async () => {
+            try {
+                const response = await axios({
+                    method: "GET",
+                    url: BASE_URL + `/daycare/by-id/${param.id}`,
+                    headers: {
+                      "content-type": "application/json",
+                      Authorization: "Bearer " + token,
+                    },
+                  });
+            
+                  if (response.data) {
+                    setReviews(response.data.reviews);
+                  }
+            } catch (err) {
+                toast.error("Some error occurred while registration!")
+                console.error(err)
+            }
+        }
 
     return (
         <Box sx={{ mt: 5, padding: 5, display: "flex", flexDirection: "column", justifyContent: "center" }}>
