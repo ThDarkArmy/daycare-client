@@ -89,6 +89,7 @@ const deleteDaycare = async (id) => {
       }
     });
     if (response.data) {
+      loadDaycares();
       toast.success("Daycare deleted successfully")
     }
   } catch (err) {

@@ -143,16 +143,16 @@ const KidsDashboard = () => {
                             Month/Year: {payment.month}/{payment.year}
                           </Typography>
                           <Typography color="textSecondary">
-                            Admission Fee: ${payment.admissionFee}
+                            Admission Fee: ₹{payment.admissionFee}
                           </Typography>
                           <Typography color="textSecondary">
-                            Tuition Fee: ${payment.tuitionFee}
+                            Tuition Fee: ₹{payment.tuitionFee}
                           </Typography>
                           <Typography color="textSecondary">
-                            Cultural Activity Fee: ${payment.culturalActivityFee}
+                            Cultural Activity Fee: ₹{payment.culturalActivityFee}
                           </Typography>
                           <Typography color="textSecondary">
-                            Other Fee: ${payment.otherFee}
+                            Other Fee: ₹{payment.otherFee}
                           </Typography>
                           <Typography color="textSecondary">
                             Payment Date: {new Date(payment.paymentDate).toLocaleDateString()}

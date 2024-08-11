@@ -4,7 +4,6 @@ import {
   List, ListItem, ListItemIcon, ListItemText, Divider, Container, Paper
 } from '@mui/material';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-import ReviewsIcon from '@mui/icons-material/Reviews';
 import GroupIcon from '@mui/icons-material/Group';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import InfoIcon from '@mui/icons-material/Info';
@@ -148,7 +147,7 @@ const DaycareDashboard = () => {
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
               <Button onClick={()=> navigate(`/admission/${daycare?.id}`)} variant="contained" fullWidth sx={{ py: 1.5, fontSize: '1rem', boxShadow: 3 }}>
-                Admission Page
+                Admit Kid 
               </Button>
             </Grid>
             <Grid item xs={12} md={4}>

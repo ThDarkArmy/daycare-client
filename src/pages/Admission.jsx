@@ -1,4 +1,4 @@
-import { Box, Button, Container, Divider, FormControl, InputLabel, Menu, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import axios from "axios";
@@ -46,11 +46,11 @@ const Admission = () => {
     const role = localStorage.getItem("role");
     const token = localStorage.getItem("token");
 
-    useEffect(()=> {
-        if(!token) {
+    useEffect(() => {
+        if (!token) {
             navigate("/login-register")
         }
-    },[])
+    }, [])
 
     const [kidData, setKidData] = useState({
         name: "",
@@ -99,16 +99,16 @@ const Admission = () => {
                     url: BASE_URL + `/kids/${param.id}`,
                     data: JSON.stringify(kidData),
                     headers: {
-                      "content-type": "application/json",
-                      Authorization: "Bearer " + token,
+                        "content-type": "application/json",
+                        Authorization: "Bearer " + token,
                     },
-                  });
-            
-                  if (response.data) {
+                });
+
+                if (response.data) {
                     setKidId(response.data.id)
                     toast.success("Kid admitted successfully, please proceed with the payment.")
-                    
-                  }
+
+                }
             } catch (err) {
                 toast.error("Some error occurred while submitting admission form!")
                 console.error(err)
@@ -117,33 +117,33 @@ const Admission = () => {
     }
 
     const handlePayment = async () => {
-            try {
-                const paymentData = {
-                    admissionFee: 5000,
-                    tuitionFee: 2000,
-                    culturalActivityFee: 500,
-                    otherFee: 500,
-                    month: new Date().getMonth()+1,
-                    year: new Date().getFullYear()
-                }
-                const response = await axios({
-                    method: "post",
-                    url: BASE_URL + "/fee-payment/"+kidId,
-                    data: JSON.stringify(paymentData),
-                    headers: {
-                      "content-type": "application/json",
-                      Authorization: "Bearer " + token,
-                    },
-                  });
-            
-                  if (response.data) {
-                    toast.success("Fee payment successful")
-                    navigate("/kids-dashboard")
-                  }
-            } catch (err) {
-                toast.error("Some error occurred while paying fee!")
-                console.error(err)
+        try {
+            const paymentData = {
+                admissionFee: 5000,
+                tuitionFee: 2000,
+                culturalActivityFee: 500,
+                otherFee: 500,
+                month: new Date().getMonth() + 1,
+                year: new Date().getFullYear()
             }
+            const response = await axios({
+                method: "post",
+                url: BASE_URL + "/fee-payment/" + kidId,
+                data: JSON.stringify(paymentData),
+                headers: {
+                    "content-type": "application/json",
+                    Authorization: "Bearer " + token,
+                },
+            });
+
+            if (response.data) {
+                toast.success("Fee payment successful")
+                navigate("/kids-dashboard")
+            }
+        } catch (err) {
+            toast.error("Some error occurred while paying fee!")
+            console.error(err)
+        }
     }
 
     return (
@@ -225,31 +225,37 @@ const Admission = () => {
 
             </Box>
 
-            <Box className={classes.paymentConatiner}>
-                <span style={{color: "red", fontSize: "22px", fontWeight: 600}}>Fee Structure</span>
-                <Divider sx={{bgcolor: "red"}}/>
-                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1}}>
-                    <span>Admission Fee: </span>
-                    <span>5000 </span>
+            <Box>
+                <Box className={classes.paymentConatiner}>
+                    <span style={{ color: "red", fontSize: "22px", fontWeight: 600 }}>Fee Structure</span>
+                    <Divider sx={{ bgcolor: "red" }} />
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1 }}>
+                        <span>Admission Fee: </span>
+                        <span>5000 </span>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1 }}>
+                        <span>Tuition Fee: </span>
+                        <span>2000 </span>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1 }}>
+                        <span>Cultural Activity Fee: </span>
+                        <span>500 </span>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1 }}>
+                        <span>Other Fee: </span>
+                        <span>500 </span>
+                    </Box>
+                    <Divider sx={{ bgcolor: "black", mt: 1 }} />
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1 }}>
+                        <span>Total Amount: </span>
+                        <span>8000 </span>
+                    </Box>
+                    <Button onClick={handlePayment} disabled={!kidId} fullWidth variant='contained' sx={{ mt: 2 }}>Pay 9000</Button>
                 </Box>
-                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1}}>
-                    <span>Tuition Fee: </span>
-                    <span>2000 </span>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", padding: 1, mt: 2 }}>
+                    <span style={{color: "green"}}>Click on the below link to avail the 10% offer on admission fee.</span>
+                    <Button  onClick={()=> {window.open('https://docs.google.com/forms/d/e/1FAIpQLSf94XKUj8OihX17vg2RCkAbuWhbCbMC1gO0H3aRL7Mg59DYEQ/viewform?usp=sf_link', '_blank');}} sx={{marginTop: 1}}>Link</Button>
                 </Box>
-                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1}}>
-                    <span>Cultural Activity Fee: </span>
-                    <span>500 </span>
-                </Box>
-                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1}}>
-                    <span>Other Fee: </span>
-                    <span>500 </span>
-                </Box>
-                <Divider sx={{bgcolor: "black", mt: 1}}/>
-                <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center", mt: 1}}>
-                    <span>Total Amount: </span>
-                    <span>8000 </span>
-                </Box>
-                <Button onClick={handlePayment} disabled={!kidId} fullWidth variant='contained' sx={{mt: 2}}>Pay 9000</Button>
             </Box>
         </Box>
     )

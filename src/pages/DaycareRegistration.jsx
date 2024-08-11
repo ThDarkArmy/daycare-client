@@ -278,7 +278,7 @@ const DaycareRegistration = () => {
                     type="text"
                     name="registrationFee"
                     size='small'
-                    label="Registration Fee : $500"
+                    label="Registration Fee : ₹500"
                     className={classes.textField}
                     value={daycareData.registrationFee}
                     onChange={handleChange}
