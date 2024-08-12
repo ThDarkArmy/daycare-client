@@ -85,6 +85,7 @@ const Admission = () => {
         if (!kidData.age) tempErrors.age = "Age is required";
         else if (isNaN(kidData.age) || kidData.age <= 0) tempErrors.age = "Age must be a positive number";
         if (!kidData.contact) tempErrors.contact = "Parent contact is required";
+        if(!kidData.contact.match(/^[6-9]\d{9}$/)) tempErrors.contact = "Please enter a valid contact number";
         else if (!/^\d{10}$/.test(kidData.contact)) tempErrors.contact = "Parent contact must be a 10-digit number";
 
         setKidDataError(tempErrors);

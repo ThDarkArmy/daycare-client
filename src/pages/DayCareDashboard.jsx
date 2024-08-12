@@ -135,7 +135,7 @@ const DaycareDashboard = () => {
             <Box>
               <Typography variant="h6" sx={{ color: 'secondary.main' }}>Number of Kids: {daycare?.kids?.length}</Typography>
               <Typography variant="h6" sx={{ color: 'secondary.main' }}>Age Range: {daycare?.lowerAgeLimit} - {daycare?.higherAgeLimit} Years</Typography>
-              <Typography variant="h6" sx={{ color: 'secondary.main' }}>Total Revenue Generated: ${daycare?.kids?.length*5000}</Typography>
+              {role==="DAYCARE_OWNER" && <Typography variant="h6" sx={{ color: 'secondary.main' }}>Total Revenue Generated: ${daycare?.kids?.length*5000}</Typography>}
             </Box>
             <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
               <GroupIcon sx={{ fontSize: 36 }} />
@@ -146,7 +146,7 @@ const DaycareDashboard = () => {
 
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <Button onClick={()=> navigate(`/admission/${daycare?.id}`)} variant="contained" fullWidth sx={{ py: 1.5, fontSize: '1rem', boxShadow: 3 }}>
+              <Button disabled={role==="ADMIN" || role==="DAYCARE_OWNER"} onClick={()=> navigate(`/admission/${daycare?.id}`)} variant="contained" fullWidth sx={{ py: 1.5, fontSize: '1rem', boxShadow: 3 }}>
                 Admit Kid 
               </Button>
             </Grid>

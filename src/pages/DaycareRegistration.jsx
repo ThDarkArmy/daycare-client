@@ -1,4 +1,4 @@
-import { Box, Button, Container, Divider, FormControl, InputLabel, Menu, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import axios from "axios";
@@ -127,6 +127,7 @@ const DaycareRegistration = () => {
         if (!daycareData.higherAgeLimit) tempErrors.higherAgeLimit = "Higher Age Limit is required";
         else if (isNaN(daycareData.higherAgeLimit) || daycareData.higherAgeLimit <= 0) tempErrors.higherAgeLimit = "Higher age limit must be a positive number";
         if (!daycareData.contactNumber) tempErrors.contactNumber = "Parent contactNumber is required";
+        if(!daycareData.contactNumber.match(/^[6-9]\d{9}$/)) tempErrors.contactNumber = "Please enter a valid contact number";
         else if (!/^\d{10}$/.test(daycareData.contactNumber)) tempErrors.contactNumber = "Parent contactNumber must be a 10-digit number";
 
         setDaycareDataError(tempErrors);
