@@ -91,7 +91,7 @@ export default function Register({ handleHaveAccount }) {
       setaddressError(false)
     }
 
-    if(contactNumber==="" || contactNumber.length!=10){
+    if(contactNumber==="" || contactNumber.length!=10 || !contactNumber.match(/^[6-9]\d{9}$/)){
       er=true;
       
       setContactNumberError(true)
