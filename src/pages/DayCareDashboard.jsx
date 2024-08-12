@@ -135,7 +135,7 @@ const DaycareDashboard = () => {
             <Box>
               <Typography variant="h6" sx={{ color: 'secondary.main' }}>Number of Kids: {daycare?.kids?.length}</Typography>
               <Typography variant="h6" sx={{ color: 'secondary.main' }}>Age Range: {daycare?.lowerAgeLimit} - {daycare?.higherAgeLimit} Years</Typography>
-              {role==="DAYCARE_OWNER" && <Typography variant="h6" sx={{ color: 'secondary.main' }}>Total Revenue Generated: ${daycare?.kids?.length*5000}</Typography>}
+              {role==="DAYCARE_OWNER" && <Typography variant="h6" sx={{ color: 'secondary.main' }}>Total Revenue Generated: ₹{daycare?.kids?.length*5000}</Typography>}
             </Box>
             <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
               <GroupIcon sx={{ fontSize: 36 }} />

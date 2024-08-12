@@ -175,7 +175,7 @@ const deleteDaycare = async (id) => {
           <Box sx={{display: "flex", mt: 1, mr: 2}}>
           <Box sx={{flexGrow: 1}}></Box>
           <Box sx={{ml: "auto"}}>
-          <Typography variant="h6" sx={{ color: 'secondary.main' }}>Total Revenue Generated: ${daycares?.length*500}</Typography>
+          <Typography variant="h6" sx={{ color: 'secondary.main' }}>Total Revenue Generated: ₹{daycares?.length*500}</Typography>
           </Box>
           </Box>
          
