@@ -15,7 +15,7 @@ import Alert from '@mui/material/Alert';
 
 import { MenuItem, InputLabel, FormControl, Select,  } from "@mui/material";
 
-const BASE_URL = "http://50.19.9.50/api/v1";
+const BASE_URL = "http://100.27.196.227/api/v1";
 
 const theme = createTheme();
 
@@ -60,6 +60,8 @@ export default function Register({ handleHaveAccount }) {
 
     const { email, contactNumber, password} = data
 
+    const namePattern = /^[A-Za-z]+$/;
+
     if(email==="" || !validateEmail(email)){
       
       er=true;
@@ -67,15 +69,16 @@ export default function Register({ handleHaveAccount }) {
     }else{
       setEmailError(false)
     }
-    if(formData.get("firstName")===""){
+    if(formData.get("firstName")==="" || !namePattern.test(formData.get("firstName"))){
       er=true;
      
       setFirstNameError(true)
-    }else{
+    }
+    else{
       setFirstNameError(false)
     }
 
-    if(formData.get("lastName")===""){
+    if(formData.get("lastName")==="" || !namePattern.test(formData.get("lastName"))){
       er=true;
      
       setLastNameError(true)

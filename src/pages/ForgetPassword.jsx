@@ -4,7 +4,7 @@ import axios from "axios";
 import { Grid, TextField, Button, Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const BASE_URL = "http://50.19.9.50/api/v1";
+const BASE_URL = "http://100.27.196.227/api/v1";
 
 const ForgetPassword = () => {
   const navigate = useNavigate();

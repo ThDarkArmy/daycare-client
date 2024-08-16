@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 
 
-const BASE_URL = "http://50.19.9.50/api/v1";
+const BASE_URL = "http://100.27.196.227/api/v1";
 
 const useStyles = makeStyles((theme) => ({
     container: {
