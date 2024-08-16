@@ -1,4 +1,8 @@
-import { Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, TextField, Typography,  Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import axios from "axios";
@@ -117,35 +121,98 @@ const Admission = () => {
         }
     }
 
-    const handlePayment = async () => {
-        try {
-            const paymentData = {
-                admissionFee: 5000,
-                tuitionFee: 2000,
-                culturalActivityFee: 500,
-                otherFee: 500,
-                month: new Date().getMonth() + 1,
-                year: new Date().getFullYear()
+    const handleSubmitPaymentForm = async () => {
+        if(paymentFormValidate()){
+            try {
+                const paymentData = {
+                    admissionFee: 5000,
+                    tuitionFee: 2000,
+                    culturalActivityFee: 500,
+                    otherFee: 500,
+                    month: new Date().getMonth() + 1,
+                    year: new Date().getFullYear()
+                }
+                const response = await axios({
+                    method: "post",
+                    url: BASE_URL + "/fee-payment/" + kidId,
+                    data: JSON.stringify(paymentData),
+                    headers: {
+                        "content-type": "application/json",
+                        Authorization: "Bearer " + token,
+                    },
+                });
+    
+                if (response.data) {
+                    toast.success("Fee payment successful")
+                    navigate("/kids-dashboard")
+                }
+            } catch (err) {
+                toast.error("Some error occurred while paying fee!")
+                console.error(err)
             }
-            const response = await axios({
-                method: "post",
-                url: BASE_URL + "/fee-payment/" + kidId,
-                data: JSON.stringify(paymentData),
-                headers: {
-                    "content-type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-            });
-
-            if (response.data) {
-                toast.success("Fee payment successful")
-                navigate("/kids-dashboard")
-            }
-        } catch (err) {
-            toast.error("Some error occurred while paying fee!")
-            console.error(err)
         }
+       
     }
+
+    const [open, setOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        cardNumber: '',
+        cardHolder: '',
+        expiryDate: '',
+        cvv: ''
+    });
+
+    const [errors, setErrors] = useState({});
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handlePaymentFormChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+    };
+
+    const paymentFormValidate = () => {
+        let formErrors = {};
+        const cardNumberPattern = /^\d{16}$/;
+        const cvvPattern = /^\d{3}$/;
+        const expiryDatePattern = /^(0[1-9]|1[0-2])\/?([0-9]{2})$/;
+
+        if (!formData.cardNumber || !cardNumberPattern.test(formData.cardNumber)) {
+            formErrors.cardNumber = 'Card number must be 16 digits';
+        }
+
+        if (!formData.cardHolder) {
+            formErrors.cardHolder = 'Cardholder name is required';
+        }
+
+        if (!formData.expiryDate || !expiryDatePattern.test(formData.expiryDate)) {
+            formErrors.expiryDate = 'Expiry date must be in MM/YY format';
+        }
+
+        if (!formData.cvv || !cvvPattern.test(formData.cvv)) {
+            formErrors.cvv = 'CVV must be 3 digits';
+        }
+
+        setErrors(formErrors);
+        return Object.keys(formErrors).length === 0;
+    };
+
+    const handlePayment = (e) => {
+        e.preventDefault();
+        if (paymentFormValidate()) {
+            setOpen(false);
+            toast.success("Payment Successful!")
+        }
+    };
 
     return (
         <Box className={classes.container}>
@@ -251,13 +318,81 @@ const Admission = () => {
                         <span>Total Amount: </span>
                         <span>8000 </span>
                     </Box>
-                    <Button onClick={handlePayment} disabled={!kidId} fullWidth variant='contained' sx={{ mt: 2 }}>Pay 9000</Button>
+                    <Button onClick={()=> setOpen(true)} disabled={!kidId} fullWidth variant='contained' sx={{ mt: 2 }}>Pay 9000</Button>
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", padding: 1, mt: 2 }}>
                     <span style={{color: "green"}}>Click on the below link to avail the 10% offer on admission fee.</span>
                     <Button  onClick={()=> {window.open('https://docs.google.com/forms/d/e/1FAIpQLSf94XKUj8OihX17vg2RCkAbuWhbCbMC1gO0H3aRL7Mg59DYEQ/viewform?usp=sf_link', '_blank');}} sx={{marginTop: 1}}>Link</Button>
                 </Box>
             </Box>
+            <Dialog open={open} onClose={handleClose} fullWidth>
+                <DialogTitle>Payment Information</DialogTitle>
+                <DialogContent>
+                    <form onSubmit={handleSubmit}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Card Number"
+                                    name="cardNumber"
+                                    value={formData.cardNumber}
+                                    onChange={handlePaymentFormChange}
+                                    error={!!errors.cardNumber}
+                                    helperText={errors.cardNumber}
+                                    inputProps={{ maxLength: 16 }}
+                                    placeholder="1234 5678 9101 1121"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Cardholder Name"
+                                    name="cardHolder"
+                                    value={formData.cardHolder}
+                                    onChange={handlePaymentFormChange}
+                                    error={!!errors.cardHolder}
+                                    helperText={errors.cardHolder}
+                                    placeholder="John Doe"
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Expiry Date"
+                                    name="expiryDate"
+                                    value={formData.expiryDate}
+                                    onChange={handlePaymentFormChange}
+                                    error={!!errors.expiryDate}
+                                    helperText={errors.expiryDate}
+                                    placeholder="MM/YY"
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    fullWidth
+                                    label="CVV"
+                                    name="cvv"
+                                    value={formData.cvv}
+                                    onChange={handlePaymentFormChange}
+                                    error={!!errors.cvv}
+                                    helperText={errors.cvv}
+                                    inputProps={{ maxLength: 3 }}
+                                    placeholder="123"
+                                    type="password"
+                                />
+                            </Grid>
+                        </Grid>
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="secondary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmitPaymentForm} color="primary">
+                        Pay Now
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 }
