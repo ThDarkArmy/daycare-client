@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import KidForm from "../components/KidForm";
 
-const BASE_URL = "http://localhost:8000/api/v1";
+const BASE_URL = "http://50.19.9.50/api/v1";
 
 
 const KidsDashboard = () => {

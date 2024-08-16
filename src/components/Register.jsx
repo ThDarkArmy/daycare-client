@@ -15,7 +15,7 @@ import Alert from '@mui/material/Alert';
 
 import { MenuItem, InputLabel, FormControl, Select,  } from "@mui/material";
 
-const BASE_URL = "http://localhost:8000/api/v1";
+const BASE_URL = "http://50.19.9.50/api/v1";
 
 const theme = createTheme();
 
