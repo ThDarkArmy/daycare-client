@@ -180,6 +180,26 @@ const Admission = () => {
         });
     };
 
+    const validateExpiryDate = (expiryDate) => {
+        const expiryDatePattern = /^(0[1-9]|1[0-2])\/?([0-9]{2})$/;
+        if (!expiryDatePattern.test(expiryDate)) {
+            return false; // Invalid format
+        }
+
+        const [expMonth, expYear] = expiryDate.split('/');
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1; // Months are 0-based, so we add 1
+        const currentYear = parseInt(currentDate.getFullYear().toString().slice(-2)); // Get last 2 digits of current year
+
+        const expMonthInt = parseInt(expMonth, 10);
+        const expYearInt = parseInt(expYear, 10);
+
+        if (expYearInt > currentYear || (expYearInt === currentYear && expMonthInt >= currentMonth)) {
+            return true; // Not expired
+        }
+        return false; // Expired
+    };
+
     const paymentFormValidate = () => {
         let formErrors = {};
         const cardNumberPattern = /^\d{16}$/;
@@ -194,8 +214,8 @@ const Admission = () => {
             formErrors.cardHolder = 'Cardholder name is required';
         }
 
-        if (!formData.expiryDate || !expiryDatePattern.test(formData.expiryDate)) {
-            formErrors.expiryDate = 'Expiry date must be in MM/YY format';
+        if (!formData.expiryDate || !validateExpiryDate(formData.expiryDate)) {
+            formErrors.expiryDate = 'Expiry date is invalid or card is expired';
         }
 
         if (!formData.cvv || !cvvPattern.test(formData.cvv)) {
@@ -318,7 +338,7 @@ const Admission = () => {
                         <span>Total Amount: </span>
                         <span>8000 </span>
                     </Box>
-                    <Button onClick={()=> setOpen(true)} disabled={!kidId} fullWidth variant='contained' sx={{ mt: 2 }}>Pay 9000</Button>
+                    <Button onClick={()=> setOpen(true)} disabled={!kidId} fullWidth variant='contained' sx={{ mt: 2 }}>Pay 8000</Button>
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", padding: 1, mt: 2 }}>
                     <span style={{color: "green"}}>Click on the below link to avail the 10% offer on admission fee.</span>
