@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-const BASE_URL = "http://100.27.196.227/api/v1";
+const BASE_URL = "http://localhost:8000/api/v1";
 
 const Activities = () => {
     const role = localStorage.getItem("role");

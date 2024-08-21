@@ -22,7 +22,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import axios from "axios";
 
 
-const BASE_URL = "http://100.27.196.227/api/v1";
+const BASE_URL = "http://localhost:8000/api/v1";
 
 export default function Header() {
   const loggedInUser = localStorage.getItem("loggedInUser");
